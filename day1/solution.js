@@ -14,8 +14,9 @@ console.log("part 1 is: " + part1);
 
 // Part 2
 // Recursive attempt
+// Fails with RangeError: Maximum call stack size exceeded
 function firstDupe(seen, total, remaining, original) {
-  console.log(`next is ${remaining[0]}, remaining ${remaining.length}, total is ${total}, seen ${seen.size}`)
+  //console.log(`next is ${remaining[0]}, remaining ${remaining.length}, total is ${total}, seen ${seen.size}`)
   if (remaining.length === 0) {
     return firstDupe(seen, total, original, original)
   }
@@ -35,7 +36,7 @@ function repeatedTotal(changes) {
   while(true) {
     for (let change of changes) {
       total += change;
-      console.log(`next is ${change}, total is ${total}, seen ${seen.size}`)
+      //console.log(`next is ${change}, total is ${total}, seen ${seen.size}`)
       if (seen.has(total)) {
         return total;
       }
@@ -44,6 +45,6 @@ function repeatedTotal(changes) {
   }
 }
 
-console.log(repeatedTotal(input))
-//const part2 = firstDupe(new Set([0]), 0, input, input)
-//console.log("part 2 is: " + part2);
+//const part2 = repeatedTotal(input)
+const part2 = firstDupe(new Set([0]), 0, input, input)
+console.log("part 2 is: " + part2);
