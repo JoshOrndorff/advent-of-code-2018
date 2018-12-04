@@ -40,7 +40,7 @@ main = do
   handle <- openFile "input.txt" ReadMode
   contents <- hGetContents handle
   let changes = map parseInt (words contents)
-      part1 = finalFreq 0 changes
+      part1 = finalFreq 0 changes -- I guess probably reduce would have worked here. How does that work in haskell?
       part2 = findRepeat Set.empty 0 changes
   print part1
   print part2
