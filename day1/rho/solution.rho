@@ -1,0 +1,71 @@
+
+new finalFreq, parseDigit, simpleParseInt, parseInt, stdout(`rho:io:stdout`) in {
+
+  contract parseDigit(@s /\ String, return, error) = {
+    match s {
+      "0" => return!(0)
+      "1" => return!(1)
+      "2" => return!(2)
+      "3" => return!(3)
+      "4" => return!(4)
+      "5" => return!(5)
+      "6" => return!(6)
+      "7" => return!(7)
+      "8" => return!(8)
+      "9" => return!(9)
+      _   => error!("Error while parsing digit: " ++ s)
+    }
+  } |
+
+  /**
+   * Takes a string representing a positive integer and parses it
+   * No guarantees are made about numbers beyond the 64-bit signed range
+   * @param s A string containing [0-9]+
+   * @return A positive int parsed fro mthe string
+   */
+  contract simpleParseInt(@acc, @{s /\ String}, return, error) = {
+    if (s.length() == 0) {
+      error!("Invalid length 0 string in simpleParseInt")
+    }
+    else {
+      new msdCh in {
+        // let msd = parseDigit!(...)
+        parseDigit!(s.slice(0,1), *msdCh, *error) |
+        for(@msd <- msdCh) {
+          if (s.length() == 1) {
+            return!(acc * 10 + msd)
+          }
+          else { // proper multi-digit string
+            simpleParseInt!(acc * 10 + msd, s.slice(1, s.length()), *return, *error)
+          }
+        }
+      }
+    }
+  } |
+
+  contract parseInt(@{s /\ String}, return) = {
+    if (s.slice(0, 1) == "+") {
+      Nil //TODO
+    }
+  } |
+
+  //TODO this is just like Rinke's sumlist and should go in librho.
+  // Probably should be generalized to reduce Interesting thought, reduce
+  // could work as normal where an accumulator gets passed along. Or
+  // a channel on which to listen for the current accumulator value could
+  // get passed along
+  contract finalFreq(@current, @[], return) = {
+    return!(current)
+  } |
+
+  contract finalFreq(@current, @[change ...changes], return) = {
+    finalFreq!(current + change, changes, *return)
+  } |
+
+  //finalFreq!(0, [1, -2, 3, 1], *stdout)
+  simpleParseInt!(0, "7" , *stdout, *stdout) | // 7
+  simpleParseInt!(0, "4567", *stdout, *stdout) | // 4567
+  simpleParseInt!(0, ""  , *stdout, *stdout) | // "Invalid length 0 string in simpleParseInt"
+  simpleParseInt!(0, "hi", *stdout, *stdout) | // "Error while parsing digit: h"
+
+Nil}
