@@ -1,0 +1,22 @@
+new reduce in {
+
+  // export+{reduce}
+
+  //TODO this is just like Rinke's sumlist and should go in librho.
+  // Probably should be generalized to reduce Interesting thought, reduce
+  // could work as normal where an accumulator gets passed along. Or
+  // a channel on which to listen for the current accumulator value could
+  // get passed along
+  contract reduce(reducer,  @accumulator, @[], return) = {
+    return!(accumulator)
+  } |
+
+  contract reduce(reducer, @accumulator, @[head ...tail], return) = {
+    new newAccCh in {
+      reducer!(accumulator, head, *newAccCh) |
+      for (@newAcc <- newAccCh) {
+        reduce!(*reducer, newAcc, tail, *return)
+      }
+    }
+  }
+}
