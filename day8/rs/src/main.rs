@@ -21,7 +21,6 @@ fn build_tree(mut nums: &mut Vec<usize>) -> Tree {
 }
 
 fn sum_metadata(t: &Tree) -> usize {
-    //TODO this is a dummy value
     // Recursively sum the children
     let subtotal_children: usize = t.children.iter().map(sum_metadata).sum();
 
@@ -32,8 +31,21 @@ fn sum_metadata(t: &Tree) -> usize {
     subtotal_children + subtotal_self
 }
 
-fn solve_part_2(t: &Tree) {
-    //TODO
+fn score_node(t: &Tree) -> usize {
+    if t.children.len() == 0 {
+        t.metadata.iter().sum()
+    }
+    else {
+        let mut sum : usize = 0;
+        for i in t.metadata.iter() {
+            let reali = *i -1;
+            sum += match t.children.get(reali) {
+                Some(child) => score_node(&child),
+                None => 0,
+            };
+        }
+        sum
+    }
 }
 
 fn main() {
@@ -52,10 +64,12 @@ fn main() {
     let t = build_tree(&mut nums);
 
     // Sum the metadata
-    let sum = sum_metadata(&t);
+    let metadata_sum = sum_metadata(&t);
 
     // Solve part 2
+    let root_score = score_node(&t);
 
     // Print the results
-    println!("Sum of metadata is: {}", sum);
+    println!("Sum of metadata is: {}", metadata_sum);
+    println!("Score of root is: {}", root_score)
 }
