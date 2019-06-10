@@ -11,35 +11,37 @@ fn raw_power_level(serial: isize, x: isize, y: isize) -> isize {
     hundreds - 5
 }
 
-fn power_3x3(x: isize, y: isize) -> isize {
-    power_level(x    , y    ) +
-    power_level(x + 1, y    ) +
-    power_level(x + 2, y    ) +
-    power_level(x    , y + 1) +
-    power_level(x + 1, y + 1) +
-    power_level(x + 2, y + 1) +
-    power_level(x    , y + 2) +
-    power_level(x + 1, y + 2) +
-    power_level(x + 2, y + 2)
-}
-
-fn main() {
-    let mut best_power = 0;
-    let mut best_x = 0;
-    let mut best_y = 0;
-
-    for i in 0..299 {
-        for j in 0..299 {
-            let cur_power = power_3x3(i, j);
-            if cur_power > best_power {
-                best_power = cur_power;
-                best_x = i;
-                best_y = j;
-            }
+fn power_nxn(n: isize, x: isize, y: isize) -> isize {
+    let mut power = 0;
+    for i in 0..n {
+        for j in 0..n {
+            power += power_level(x + i, y + j);
         }
     }
+    power
+}
 
-    println!("Best Coordinates are {},{}", best_x, best_y);
+// This is _not_ good time complexity. Luckily all the powers went to 0 starting
+// from 26x26, so I only had to search a little bit of the space.
+// Must be a property of the power function?
+fn main() {
+    for n in 1..=300 {
+        let mut best_power = 0;
+        let mut best_x = 0;
+        let mut best_y = 0;
+        for i in 0..(300-n) {
+            for j in 0..(300-n) {
+                let cur_power = power_nxn(n, i, j);
+                if cur_power > best_power {
+                    best_power = cur_power;
+                    best_x = i;
+                    best_y = j;
+                }
+            }
+        }
+
+        println!("Best Coordinates for {}x{} cell are {},{} with power {}", n, n, best_x, best_y, best_power);
+    }
 }
 
 
